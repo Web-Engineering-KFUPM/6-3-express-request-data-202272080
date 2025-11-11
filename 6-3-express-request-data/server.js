@@ -130,3 +130,35 @@ app.get("/echo", (req, res) => {
     msg: `Hello ${name}, you are ${age}` 
   });
 });
+
+app.get("/profile/:first/:last", (req, res) => {
+  const { first, last } = req.params;
+  
+  return res.json({ 
+    ok: true, 
+    fullName: `${first} ${last}` 
+  });
+});
+
+
+app.param("userId", (req, res, next, userId) => {
+  const num = Number(userId);
+  
+  if (!Number.isFinite(num) || num <= 0) {
+    return res.status(400).json({ 
+      ok: false, 
+      error: "userId must be positive number" 
+    });
+  }
+  
+  req.userIdNum = num;
+  next();
+});
+
+
+app.get("/users/:userId", (req, res) => {
+  return res.json({ 
+    ok: true, 
+    userId: req.userIdNum 
+  });
+});
